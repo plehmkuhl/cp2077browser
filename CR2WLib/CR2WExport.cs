@@ -42,7 +42,7 @@ namespace CR2WLib
             }
         }
 
-        public string CName { get => this.file.IndexedStrings[this.entry.ClassName]; }
+        public string CName { get => this.file.CNames[this.entry.ClassName]; }
         public CR2WExport Parent { get => this.parent; set => this.parent = value; }
         public List<CR2WExport> Children { get => this.children; }
         public Dictionary<String, CR2WVariant> Data { get => this.data;  }

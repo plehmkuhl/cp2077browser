@@ -65,6 +65,24 @@
     <Compile Include="FileViewer\Viewer_C2DArray.Designer.cs">
       <DependentUpon>Viewer_C2DArray.cs</DependentUpon>
     </Compile>
+    <Compile Include="FileViewer\Viewer_GenericCR2W.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FileViewer\Viewer_GenericCR2W.Designer.cs">
+      <DependentUpon>Viewer_GenericCR2W.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FileViewer\Viewer_RedResourceListResource.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FileViewer\Viewer_RedResourceListResource.Designer.cs">
+      <DependentUpon>Viewer_RedResourceListResource.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FileViewer\Viewer_WorldWorldListResource.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FileViewer\Viewer_WorldWorldListResource.Designer.cs">
+      <DependentUpon>Viewer_WorldWorldListResource.cs</DependentUpon>
+    </Compile>
     <Compile Include="LoadingArchives.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -78,6 +96,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FileViewer\Viewer_C2DArray.resx">
       <DependentUpon>Viewer_C2DArray.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FileViewer\Viewer_GenericCR2W.resx">
+      <DependentUpon>Viewer_GenericCR2W.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FileViewer\Viewer_RedResourceListResource.resx">
+      <DependentUpon>Viewer_RedResourceListResource.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FileViewer\Viewer_WorldWorldListResource.resx">
+      <DependentUpon>Viewer_WorldWorldListResource.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LoadingArchives.resx">
       <DependentUpon>LoadingArchives.cs</DependentUpon>

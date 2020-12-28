@@ -31,7 +31,7 @@ namespace CP77Brow.FileViewer
                 return;
 
             // Read Header
-            List<string> headers = this.ReadStringArray(new BinaryReader(new MemoryStream(header.RawData)));
+            string[] headers = header.ToStringArray();
             foreach (string headerName in headers)
             {
                 this.dataGridView1.Columns.Add(headerName, headerName);
@@ -39,18 +39,16 @@ namespace CP77Brow.FileViewer
 
             // Read data
             {
-                BinaryReader reader = new BinaryReader(new MemoryStream(data.RawData));
-                uint rows = reader.ReadUInt32();
+                string[][] dataValues = data.To2DStringArray();
 
-                for (uint i=0; i < rows; i++)
+                for (uint r=0; r < dataValues.Length; r++)
                 {
-                    List<string> rowData = this.ReadStringArray(reader);
                     DataGridViewRow gridRow = new DataGridViewRow();
 
                     gridRow.CreateCells(this.dataGridView1);
-                    for (int c=0; c < rowData.Count; c++)
+                    for (int c=0; c < dataValues[r].Length; c++)
                     {
-                        gridRow.Cells[c].Value = rowData[c];
+                        gridRow.Cells[c].Value = dataValues[r][c];
                     }
 
                     this.dataGridView1.Rows.Add(gridRow);

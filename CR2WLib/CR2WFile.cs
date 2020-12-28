@@ -22,6 +22,7 @@ namespace CR2WLib
         private CR2WChunkEntry[] chunks;
         private CR2WBufferEntry[] buffers;
 
+        private List<CR2WImport> imports;
         private List<CR2WExport> exports;
         private List<CR2WProperty> hlProperties;
 
@@ -30,9 +31,9 @@ namespace CR2WLib
 
         }
 
-        public string[] IndexedStrings { get => this.names; }
+        public string[] CNames { get => this.names; }
         public Dictionary<uint, string> OffsetStrings { get => this.strings; }
-
+        public List<CR2WImport> Imports { get => this.imports; }
         public List<CR2WExport> Exports { get => this.exports; }
         public List<CR2WProperty> Properties { get => this.hlProperties; }
 
@@ -111,6 +112,28 @@ namespace CR2WLib
                 }
             }
 
+            // Read imports
+            {
+                byte[] importBuffer = new byte[this.tables[2].ItemCount * Marshal.SizeOf<CR2WImportEntry>()];
+                this.stream.Seek(this.tables[2].Offset, SeekOrigin.Begin);
+                this.stream.Read(importBuffer, 0, importBuffer.Length);
+
+                this.imports = new List<CR2WImport>();
+
+                BinaryReader importReader = new BinaryReader(new MemoryStream(importBuffer));
+                for (int i = 0; i < this.tables[2].ItemCount; i++)
+                {
+                    CR2WImportEntry entry = new CR2WImportEntry()
+                    {
+                        Path = importReader.ReadUInt32(),
+                        ClassName = importReader.ReadUInt16(),
+                        Flags = importReader.ReadUInt16(),
+                    };
+
+                    this.imports.Add(new CR2WImport(this, entry));
+                }
+            }
+
             // Read properties
             {
                 byte[] propertyBuffer = new byte[this.tables[3].ItemCount * Marshal.SizeOf<CR2WPropertyEntry>()];
@@ -132,7 +155,8 @@ namespace CR2WLib
                         Hash = propertyReader.ReadUInt64(),
                     };
 
-                    this.hlProperties.Add(CR2WProperty.CreateFromPropertyEntry(this, this.properties[i]));
+                    if (this.properties[i].ClassName != 0)
+                        this.hlProperties.Add(CR2WProperty.CreateFromPropertyEntry(this, this.properties[i]));
                 }
             }
 

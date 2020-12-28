@@ -180,10 +180,36 @@ namespace CP77Brow
                 switch (cr2w.Exports[0].CName)
                 {
                     case "C2dArray":
-                        Viewer_C2DArray viewer = new Viewer_C2DArray(cr2w);
-                        viewer.Dock = DockStyle.Fill;
-                        page.Controls.Add(viewer);
-                        break;
+                        {
+                            Viewer_C2DArray viewer = new Viewer_C2DArray(cr2w);
+                            viewer.Dock = DockStyle.Fill;
+                            page.Controls.Add(viewer);
+                            break;
+                        }
+
+                    case "redResourceListResource":
+                        {
+                            Viewer_RedResourceListResource viewer = new Viewer_RedResourceListResource(cr2w);
+                            viewer.Dock = DockStyle.Fill;
+                            page.Controls.Add(viewer);
+                            break;
+                        }
+
+                    case "worldWorldListResource":
+                        {
+                            Viewer_WorldWorldListResource viewer = new Viewer_WorldWorldListResource(cr2w);
+                            viewer.Dock = DockStyle.Fill;
+                            page.Controls.Add(viewer);
+                            break;
+                        }
+
+                    default:
+                        {
+                            Viewer_GenericCR2W viewer = new Viewer_GenericCR2W(cr2w);
+                            viewer.Dock = DockStyle.Fill;
+                            page.Controls.Add(viewer);
+                            break;
+                        }
                 }
                 
                 this.editorTabControl.TabPages.Add(page);

@@ -6,16 +6,22 @@ namespace CR2WLib
 {
     public class CR2WProperty
     {
-        string className;
-        string propertyName;
+        CR2WFile file;
+        CR2WPropertyEntry entry;
+
+        //string className;
+        //string propertyName;
 
         public static CR2WProperty CreateFromPropertyEntry(CR2WFile file, CR2WPropertyEntry entry)
         {
             return new CR2WProperty
             {
-                className = file.IndexedStrings[entry.ClassName],
-                propertyName = file.IndexedStrings[entry.PropertyName],
+                file = file,
+                entry = entry,
             };
         }
+
+        public string Name { get => this.file.CNames[this.entry.PropertyName]; }
+        public string ClassName { get => this.file.CNames[this.entry.ClassName]; }
     }
 }
