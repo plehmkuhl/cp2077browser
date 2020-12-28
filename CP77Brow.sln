@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CP77Brow", "CP77Brow\CP77Brow.csproj", "{03D4C877-267B-4EA7-826A-78805A791251}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArchiveLib", "ArchiveLib\ArchiveLib.csproj", "{0F062789-51EA-4E96-BBA3-7109DABC5F51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CR2WLib", "CR2WLib\CR2WLib.csproj", "{2244D895-E1B5-4CFD-B2D0-94BAD64EA6C0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{03D4C877-267B-4EA7-826A-78805A791251}.Debug|x64.ActiveCfg = Debug|x64
+		{03D4C877-267B-4EA7-826A-78805A791251}.Debug|x64.Build.0 = Debug|x64
+		{03D4C877-267B-4EA7-826A-78805A791251}.Release|x64.ActiveCfg = Release|x64
+		{03D4C877-267B-4EA7-826A-78805A791251}.Release|x64.Build.0 = Release|x64
+		{0F062789-51EA-4E96-BBA3-7109DABC5F51}.Debug|x64.ActiveCfg = Debug|x64
+		{0F062789-51EA-4E96-BBA3-7109DABC5F51}.Debug|x64.Build.0 = Debug|x64
+		{0F062789-51EA-4E96-BBA3-7109DABC5F51}.Release|x64.ActiveCfg = Release|x64
+		{0F062789-51EA-4E96-BBA3-7109DABC5F51}.Release|x64.Build.0 = Release|x64
+		{2244D895-E1B5-4CFD-B2D0-94BAD64EA6C0}.Debug|x64.ActiveCfg = Debug|x64
+		{2244D895-E1B5-4CFD-B2D0-94BAD64EA6C0}.Debug|x64.Build.0 = Debug|x64
+		{2244D895-E1B5-4CFD-B2D0-94BAD64EA6C0}.Release|x64.ActiveCfg = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {468A2ECC-251B-4718-A0EF-681CC0A6D396}
+	EndGlobalSection
+EndGlobal
