@@ -45,6 +45,7 @@ namespace CP77Brow
             this.byPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.byHashToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.exportHashesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -153,7 +154,8 @@ namespace CP77Brow
             // actionsToolStripMenuItem
             // 
             this.actionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.decodeHashesToolStripMenuItem});
+            this.decodeHashesToolStripMenuItem,
+            this.exportHashesToolStripMenuItem});
             this.actionsToolStripMenuItem.Name = "actionsToolStripMenuItem";
             this.actionsToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
             this.actionsToolStripMenuItem.Text = "Actions";
@@ -191,6 +193,13 @@ namespace CP77Brow
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            // 
+            // exportHashesToolStripMenuItem
+            // 
+            this.exportHashesToolStripMenuItem.Name = "exportHashesToolStripMenuItem";
+            this.exportHashesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportHashesToolStripMenuItem.Text = "Export hashes";
+            this.exportHashesToolStripMenuItem.Click += new System.EventHandler(this.exportHashesToolStripMenuItem_Click);
             // 
             // Browser
             // 
@@ -233,6 +242,7 @@ namespace CP77Brow
         private System.Windows.Forms.ToolStripMenuItem byPathToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem byHashToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem exportHashesToolStripMenuItem;
     }
 }
 

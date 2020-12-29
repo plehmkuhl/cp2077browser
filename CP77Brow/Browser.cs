@@ -573,5 +573,61 @@ namespace CP77Brow
                 }
             }
         }
+
+        private void exportHashesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadingArchives loaderProgress = new LoadingArchives();
+
+            SaveFileDialog saveHashListDialog = new SaveFileDialog();
+            saveHashListDialog.Filter = "Hashlist (*.txt) | *.txt";
+            if (saveHashListDialog.ShowDialog() != DialogResult.OK) return;
+
+            FileStream outputFile = new FileStream(saveHashListDialog.FileName, FileMode.OpenOrCreate);
+            outputFile.SetLength(0);
+
+            StreamWriter hashWriter = new StreamWriter(outputFile);
+
+            int fileCount = 0;
+            int loadedCount = 0;
+
+            // Determine file count
+            foreach (Archive a in ArchiveManager.Archives)
+            {
+                fileCount += (int)a.FileCount;
+            }
+
+            loaderProgress.UpdateProgres(fileCount, 0);
+            loaderProgress.Show();
+
+            Task.Run(() =>
+            {
+                // Start loading
+                SynchronizedCollection<ArchiveFileInfo> appendFiles = new SynchronizedCollection<ArchiveFileInfo>();
+
+                List<Task> loadTasks = new List<Task>();
+
+                foreach (Archive a in ArchiveManager.Archives)
+                {
+                    Console.WriteLine("Starting file listing for: " + a.File.Name);
+
+                    loadTasks.Add(a.ListFilesAsync((ArchiveFileInfo file) =>
+                    {
+                        lock(hashWriter)
+                        {
+                            hashWriter.WriteLine(file.NameHash.ToString());
+                        }
+                    }));
+                }
+
+                Task.WaitAll(loadTasks.ToArray());
+
+                outputFile.Close();
+
+                loaderProgress.UpdateProgres(fileCount, loadedCount);
+                loaderProgress.BeginInvoke((MethodInvoker)delegate () { loaderProgress.Close(); });
+
+                Console.WriteLine("Hashes exported");
+            });
+        }
     }
 }
