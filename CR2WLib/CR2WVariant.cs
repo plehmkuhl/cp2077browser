@@ -35,11 +35,23 @@ namespace CR2WLib
             if (variant.name == 0)
                 return null;
 
+            if (variant.size < 4)
+                return variant;
+
             variant.rawData = reader.ReadBytes(variant.size - 4);
 
             return variant;
         }
 
+        public string ToRaRef()  { return this.ToRaRef(new BinaryReader(new MemoryStream(this.rawData))); }
+        private string ToRaRef(BinaryReader reader)
+        {
+            ushort idx = reader.ReadUInt16();
+            if (idx == 0)
+                return null;
+
+            return this.file.Imports[idx - 1].Path;
+        }
         public string[] ToRaRefArray()
         {
             BinaryReader reader = new BinaryReader(new MemoryStream(this.rawData));
@@ -50,11 +62,7 @@ namespace CR2WLib
 
             for (uint i=0; i < elements; i++)
             {
-                ushort idx = reader.ReadUInt16();
-                if (idx == 0)
-                    continue;
-
-                data[i] = this.file.Imports[idx - 1].Path;
+                data[i] = this.ToRaRef(reader);
             }
 
             return data;

@@ -61,6 +61,11 @@ namespace ArchiveLib
             this.table = table;
         }
 
+        public ArchiveFileInfo SearchFile(UInt64 hash)
+        {
+            return this.table.SearchFile(this.File.OpenRead(), hash);
+        }
+
         public async Task ListFilesAsync(FileListingCallback callback)
         {
             await Task.Factory.StartNew(() =>

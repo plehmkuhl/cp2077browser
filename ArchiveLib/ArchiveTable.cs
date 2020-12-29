@@ -10,8 +10,6 @@ namespace ArchiveLib
 {
     public class ArchiveTable
     {
-
-
         private Archive archive;
         private long offset;
         private uint size;
@@ -55,6 +53,50 @@ namespace ArchiveLib
         }
 
         public delegate void FileListingCallback(ArchiveFileInfo file);
+
+        public ArchiveFileInfo SearchFile(Stream stream, UInt64 nameHash)
+        {
+            long start = 0;
+            long end = this.FileCount - 1;
+
+            // Perform binary search
+            while (start <= end)
+            {
+                long searchIdx = start + ((end - start) / 2);
+
+                ArchiveFileInfo file = this.GetFileByIndex(stream, searchIdx);
+
+                if (file.NameHash == nameHash) // Found the file
+                {
+                    return file; 
+                } else
+                {
+                    if (file.NameHash > nameHash)
+                        end = searchIdx - 1;
+                    else
+                        start = searchIdx + 1;
+                }
+            }
+
+            throw new FileNotFoundException();
+        }
+
+        public ArchiveFileInfo GetFileByIndex(Stream stream, long index)
+        {
+            // Calculate file offset
+            if (index >= this.FileCount)
+                throw new ArgumentOutOfRangeException();
+
+            ArchiveFileInfo file = new ArchiveFileInfo(this.archive);
+
+            long fileOffset = this.offset + Marshal.SizeOf<ArchiveTableHeader>(); // Beginning of file table
+            fileOffset += index * Marshal.SizeOf<ArchiveFileEntry>();
+
+            stream.Seek(fileOffset, SeekOrigin.Begin);
+            file.Read(stream).Wait();
+
+            return file;
+        }
 
         public async Task ListFiles(FileListingCallback callback)
         {

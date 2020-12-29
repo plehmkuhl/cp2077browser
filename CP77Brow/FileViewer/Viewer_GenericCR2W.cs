@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -59,7 +60,45 @@ namespace CP77Brow.FileViewer
 
                     foreach (string propName in export.Data.Keys)
                     {
-                        exportNode.Nodes.Add($"{export.Data[propName].Name} | {export.Data[propName].TypeName}");
+                        TreeNode exportPropNode = new TreeNode($"{export.Data[propName].Name} | {export.Data[propName].TypeName}");
+                        exportNode.Nodes.Add(exportPropNode);
+
+                        if (export.Data[propName].TypeName == "CName") {
+                            BinaryReader reader = new BinaryReader(new MemoryStream(export.Data[propName].RawData));
+                            exportPropNode.Text += " => " + file.CNames[reader.ReadUInt16()];
+                        }
+
+                        if (export.Data[propName].TypeName.Contains("array:"))
+                        {
+                            string[] propValues = null;
+
+                            if (export.Data[propName].TypeName.Contains("raRef")) {
+                                propValues = export.Data[propName].ToRaRefArray();
+                            } else if (export.Data[propName].TypeName.Contains("String")) {
+                                propValues = export.Data[propName].ToStringArray();
+                            } else if (export.Data[propName].TypeName.Contains("Multilayer_Layer")) {
+                                BinaryReader reader = new BinaryReader(new MemoryStream(export.Data[propName].RawData));
+                                int elements = reader.ReadInt32();
+
+                                for (int i=0; i < elements; i++)
+                                {
+                                    TreeNode layerNode = new TreeNode($"Layer {i + 1}");
+                                    exportPropNode.Nodes.Add(layerNode);
+                                }
+                            }
+
+                            if (propValues != null)
+                            {
+                                foreach(string propValue in propValues)
+                                {
+                                    exportPropNode.Nodes.Add(propValue);
+                                }
+                            }
+                        } else if (export.Data[propName].TypeName.Contains("raRef:")) {
+                            exportPropNode.Nodes.Add(export.Data[propName].ToRaRef());
+                        } else if (export.Data[propName].TypeName.Contains("String")) {
+                            exportPropNode.Nodes.Add(System.Text.Encoding.ASCII.GetString(export.Data[propName].RawData, 1, export.Data[propName].RawData.Length - 1));
+                        }
                     }
 
                     exportsNode.Nodes.Add(exportNode);

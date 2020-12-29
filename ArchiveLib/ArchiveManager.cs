@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ArchiveLib.Tools;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -10,6 +11,8 @@ namespace ArchiveLib
     {
         private static List<Archive> archives = new List<Archive>();
         private static List<IArchiveHashResolver> resolvers = new List<IArchiveHashResolver>();
+
+        private static HashResolver.LocalResolver cachedResolver;
 
         public static event EventHandler Ready;
 
@@ -31,8 +34,10 @@ namespace ArchiveLib
 
         public static void Initialize()
         {
-            ArchiveManager.resolvers.Add(new HashResolver.CachedResolver());
-            ArchiveManager.resolvers.Add(new HashResolver.NyxModsResolver());
+            ArchiveManager.cachedResolver = new HashResolver.LocalResolver();
+
+            ArchiveManager.resolvers.Add(new HashResolver.HashCsvResolver());
+            ArchiveManager.resolvers.Add(ArchiveManager.cachedResolver);
 
             // Init resolvers
             {
@@ -89,7 +94,7 @@ namespace ArchiveLib
                 try
                 {
                     var resolved = resolver.ResolveFilename(hash);
-                    if (resolved != "")
+                    if (resolved != null)
                         return resolved;
                 } catch (Exception)
                 {
@@ -101,13 +106,36 @@ namespace ArchiveLib
             return "";
         }
 
-        /*public ArchiveFile OpenFile(String path)
+        public static void RegisterFilePath(String path)
         {
-
+            UInt64 nameHash = FNV1A64HashAlgorithm.HashString(path);
+            ArchiveManager.cachedResolver.RegisterFilename(nameHash, path);
         }
-        public ArchiveFile OpenFileByHash(UInt64 hash)
-        {
 
-        }*/
+        public static ArchiveFileInfo SearchFile(String path)
+        {
+            UInt64 nameHash = FNV1A64HashAlgorithm.HashString(path);
+
+            try
+            {
+                return ArchiveManager.SearchFile(nameHash);
+            } catch (FileNotFoundException e)
+            {
+                throw new FileNotFoundException("File not found", path, e);
+            }
+        }
+
+        public static ArchiveFileInfo SearchFile(UInt64 hash)
+        {
+            foreach (Archive ar in ArchiveManager.archives)
+            {
+                try
+                {
+                    return ar.SearchFile(hash);
+                } catch (FileNotFoundException) {}
+            }
+
+            throw new FileNotFoundException();
+        }
     }
 }

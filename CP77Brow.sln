@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CP77Brow", "CP77Brow\CP77Br
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArchiveLib", "ArchiveLib\ArchiveLib.csproj", "{0F062789-51EA-4E96-BBA3-7109DABC5F51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CR2WLib", "CR2WLib\CR2WLib.csproj", "{2244D895-E1B5-4CFD-B2D0-94BAD64EA6C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CR2WLib", "CR2WLib\CR2WLib.csproj", "{2244D895-E1B5-4CFD-B2D0-94BAD64EA6C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +26,7 @@ Global
 		{2244D895-E1B5-4CFD-B2D0-94BAD64EA6C0}.Debug|x64.ActiveCfg = Debug|x64
 		{2244D895-E1B5-4CFD-B2D0-94BAD64EA6C0}.Debug|x64.Build.0 = Debug|x64
 		{2244D895-E1B5-4CFD-B2D0-94BAD64EA6C0}.Release|x64.ActiveCfg = Release|x64
+		{2244D895-E1B5-4CFD-B2D0-94BAD64EA6C0}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

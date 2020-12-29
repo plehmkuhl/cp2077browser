@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ArchiveLib;
+using ArchiveLib.Tools;
 using CP77Brow.FileViewer;
 using CR2WLib;
 
@@ -21,6 +22,7 @@ namespace CP77Brow
         private List<TreeNode> treeNode_Root;
         private Dictionary<string, TreeNode> treeNode_Folders;
         Dictionary<TreeNode, List<TreeNode>> nodeTree;
+        Dictionary<string, TreeNode> unknownFilesType;
 
         public Browser()
         {
@@ -36,12 +38,6 @@ namespace CP77Brow
             this.containerTreeView.BeforeCollapse += (object sender, TreeViewCancelEventArgs e) => {
                 this.UpdateFileBrowserTree(e.Node, false);
             };
-
-            this.treeNode_Folders = new Dictionary<string, TreeNode>();
-            this.treeNode_Root = new List<TreeNode>();
-
-            this.nodeTree = new Dictionary<TreeNode, List<TreeNode>>();
-            this.nodeTree.Add(this.treeNode_Unknown, new List<TreeNode>());
         }
 
         private void ContainerTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
@@ -97,7 +93,61 @@ namespace CP77Brow
                     nodeTree[folderNode].Add(this.CreateTreeNodeFromFile(f));
                 }
                 else {
-                    nodeTree[this.treeNode_Unknown].Add(this.CreateTreeNodeFromFile(f));
+                    try
+                    {
+                        ArchiveFile file = f.OpenRead();
+
+                        try
+                        {
+                            CR2WFile cr2w = CR2WFile.ReadFile(file);
+
+                            TreeNode typeNode;
+
+                            if (!this.unknownFilesType.ContainsKey(cr2w.Exports[0].CName))
+                            {
+                                typeNode = new TreeNode(cr2w.Exports[0].CName);
+                                this.unknownFilesType.Add(cr2w.Exports[0].CName, typeNode);
+                                this.nodeTree[this.treeNode_Unknown].Add(typeNode);
+                                this.nodeTree.Add(typeNode, new List<TreeNode>());
+                            }
+                            else
+                            {
+                                typeNode = this.unknownFilesType[cr2w.Exports[0].CName];
+                            }
+
+                            this.nodeTree[typeNode].Add(this.CreateTreeNodeFromFile(f));
+                        } catch (Exception e) {
+                            TreeNode blobNode;
+
+                            if (!this.unknownFilesType.ContainsKey("BLOB"))
+                            {
+                                blobNode = new TreeNode("- BINARY FILE -");
+                                this.unknownFilesType.Add("BLOB", blobNode);
+                                this.nodeTree[this.treeNode_Unknown].Add(blobNode);
+                                this.nodeTree.Add(blobNode, new List<TreeNode>());
+                            } else {
+                                blobNode = this.unknownFilesType["BLOB"];
+                            }
+
+                            this.nodeTree[blobNode].Add(this.CreateTreeNodeFromFile(f));
+                        }
+
+                        file.Close();
+                    } catch (Exception e) {
+                        TreeNode brokenNode;
+
+                        if (!this.unknownFilesType.ContainsKey("BROKEN"))
+                        {
+                            brokenNode = new TreeNode("- BROKEN FILE -");
+                            this.unknownFilesType.Add("BROKEN", brokenNode);
+                            this.nodeTree[this.treeNode_Unknown].Add(brokenNode);
+                            this.nodeTree.Add(brokenNode, new List<TreeNode>());
+                        } else {
+                            brokenNode = this.unknownFilesType["BROKEN"];
+                        }
+
+                        this.nodeTree[brokenNode].Add(this.CreateTreeNodeFromFile(f));
+                    }
                 }
             }
         }
@@ -118,7 +168,7 @@ namespace CP77Brow
                 this.UpdateFileBrowserTree(n, n.IsExpanded);
             }
 
-            this.treeNode_Unknown.Text = String.Format("Missing Hashes ({0})", this.nodeTree[this.treeNode_Unknown].Count);
+            this.treeNode_Unknown.Text = String.Format("Missing Hashes");
             
             this.containerTreeView.EndUpdate();
 
@@ -293,6 +343,14 @@ namespace CP77Brow
 
         public Task LoadFileTree()
         {
+            this.treeNode_Folders = new Dictionary<string, TreeNode>();
+            this.treeNode_Root = new List<TreeNode>();
+
+            this.nodeTree = new Dictionary<TreeNode, List<TreeNode>>();
+            this.nodeTree.Add(this.treeNode_Unknown, new List<TreeNode>());
+
+            this.unknownFilesType = new Dictionary<string, TreeNode>();
+
             LoadingArchives loaderProgress = new LoadingArchives();
 
             int fileCount = 0;
@@ -371,6 +429,149 @@ namespace CP77Brow
 
                 Console.WriteLine("All files added");
             });
+        }
+
+        private void decodeHashesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // This will take a long time
+            LoadingArchives loaderProgress = new LoadingArchives();
+
+            int fileCount = 0;
+            int doneCount = 0;
+
+            // Determine file count
+            foreach (Archive a in ArchiveManager.Archives)
+            {
+                fileCount += (int)a.FileCount;
+            }
+
+            loaderProgress.UpdateProgres(fileCount, 0);
+            loaderProgress.Show();
+
+            //Dictionary<ulong, string> foundHashes = new Dictionary<ulong, string>();
+            object FileLock = new Object();
+
+            Task.Run(() =>
+            {
+                List<Task> loadTasks = new List<Task>();
+
+                foreach (Archive a in ArchiveManager.Archives)
+                {
+                    Console.WriteLine("Starting file listing for: " + a.File.Name);
+
+                    loadTasks.Add(a.ListFilesAsync((ArchiveFileInfo file) =>
+                    {
+                        try
+                        {
+                            ArchiveFile af = file.OpenRead();
+
+                            try
+                            {
+                                CR2WFile cr2w = CR2WFile.ReadFile(af);
+
+                                foreach (CR2WImport import in cr2w.Imports)
+                                {
+                                    ulong hash = FNV1A64HashAlgorithm.HashString(import.Path);
+                                    if (ArchiveManager.ResolveFileHash(hash) == "")
+                                    {
+                                        ArchiveManager.RegisterFilePath(import.Path);
+                                        Console.WriteLine($"Found missing hash from imports: {import.Path},{hash}");
+                                    }
+                                }
+
+                                foreach (CR2WExport export in cr2w.Exports)
+                                {
+                                    if (export.Data.ContainsKey("resolvedDependencies") && export.Data["resolvedDependencies"].TypeName == "array:raRef:CResource")
+                                    {
+                                        string[] paths = export.Data["resolvedDependencies"].ToRaRefArray();
+
+                                        foreach (string path in paths)
+                                        {
+                                            ulong hash = FNV1A64HashAlgorithm.HashString(path);
+                                            if (ArchiveManager.ResolveFileHash(hash) == "")
+                                            {
+                                                ArchiveManager.RegisterFilePath(path);
+                                                Console.WriteLine($"Found missing hash from resolved dependencies: {path},{hash}");
+                                            }
+                                        }
+                                    }
+
+                                    if (export.Data.ContainsKey("dependencies") && export.Data["dependencies"].TypeName == "array:raRef:CResource")
+                                    {
+                                        string[] paths = export.Data["dependencies"].ToRaRefArray();
+
+                                        foreach (string path in paths)
+                                        {
+                                            ulong hash = FNV1A64HashAlgorithm.HashString(path);
+                                            if (ArchiveManager.ResolveFileHash(hash) == "")
+                                            {
+                                                ArchiveManager.RegisterFilePath(path);
+                                                Console.WriteLine($"Found missing hash from cooked dependency: {path},{hash}");
+                                            }
+                                        }
+                                    }
+
+                                    if (export.CName == "appearanceAppearanceDefinition")
+                                    {
+                                        try
+                                        {
+                                            BinaryReader reader = new BinaryReader(new MemoryStream(export.Data["name"].RawData));
+                                            string appearanceName = cr2w.CNames[reader.ReadUInt16()];
+
+                                            if (!cr2w.Exports[0].Data.ContainsKey("commonCookData"))
+                                                continue;
+
+                                            // Get name of common cook data
+                                            string baseName = Path.GetFileNameWithoutExtension(cr2w.Exports[0].Data["commonCookData"].ToRaRef());
+                                            baseName = baseName.Substring(7, baseName.Length - 7);
+
+                                            string cookedName = $"base\\cookedappearances\\{baseName}_{appearanceName}.cookedapp";
+
+                                            // Search additional cooked data
+                                            ulong hash = FNV1A64HashAlgorithm.HashString(cookedName);
+                                            if (ArchiveManager.ResolveFileHash(hash) == "")
+                                            {
+                                                ArchiveManager.RegisterFilePath(cookedName);
+                                                Console.WriteLine($"Found missing hash from coocked appearances: {cookedName},{hash}");
+                                            }
+                                        } catch (Exception) {}
+                                    }
+                                }
+                            } catch (Exception) {}
+
+                            af.Close();
+                        } catch (Exception) {}
+
+                        doneCount++;
+                        if ((doneCount % 100) == 0)
+                            loaderProgress.UpdateProgres(fileCount, doneCount);
+                    }));
+                }
+
+                Task.WaitAll(loadTasks.ToArray());
+
+                loaderProgress.UpdateProgres(fileCount, doneCount);
+                loaderProgress.BeginInvoke((MethodInvoker)delegate () { loaderProgress.Close(); });
+
+                this.LoadFileTree();
+            });
+        }
+
+        private void byPathToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FileNameSearch searchInput = new FileNameSearch();
+
+            if (searchInput.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    ArchiveManager.SearchFile(searchInput.FileName);
+                    Console.WriteLine($"File {searchInput.FileName} found!");
+                } catch (FileNotFoundException)
+                {
+                    Console.Error.WriteLine($"File {searchInput.FileName} not found!");
+                }
+            }
         }
     }
 }

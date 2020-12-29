@@ -13,7 +13,7 @@ namespace CR2WLib
         private CR2WChunkEntry entry;
         private CR2WExport parent;
         private List<CR2WExport> children;
-        private Dictionary<String, CR2WVariant> data;
+        private Dictionary<String, CR2WVariant> data = null;
 
         public CR2WExport(CR2WFile file, Stream stream, CR2WChunkEntry entry)
         {
@@ -21,6 +21,13 @@ namespace CR2WLib
             this.stream = stream;
             this.entry = entry;
             this.children = new List<CR2WExport>();
+
+        }
+        private void LoadData()
+        {
+            if (this.data != null)
+                return; 
+
             this.data = new Dictionary<String, CR2WVariant>();
 
             // Read variants
@@ -41,11 +48,10 @@ namespace CR2WLib
                 }
             }
         }
-
         public string CName { get => this.file.CNames[this.entry.ClassName]; }
         public CR2WExport Parent { get => this.parent; set => this.parent = value; }
         public List<CR2WExport> Children { get => this.children; }
-        public Dictionary<String, CR2WVariant> Data { get => this.data;  }
+        public Dictionary<String, CR2WVariant> Data { get { this.LoadData(); return this.data; } }
 
 
 

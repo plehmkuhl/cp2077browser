@@ -43,7 +43,15 @@ namespace CR2WLib
             CR2WFileHeader header = new CR2WFileHeader();
 
             header.Magic = System.Text.Encoding.ASCII.GetString(reader.ReadBytes(4));
+
+            if (header.Magic != "CR2W")
+                throw new Exception("Not a CR2W file");
+
             header.Version = reader.ReadUInt32();
+
+            if (header.Version > 195 || header.Version < 163)
+                throw new FormatException("Unsupported CR2W version");
+
             header.Flags = reader.ReadUInt32();
             header.Filetime = reader.ReadUInt64();
             header.BuildVersion = reader.ReadUInt32();
@@ -51,12 +59,6 @@ namespace CR2WLib
             header.BufferSize = reader.ReadUInt32();
             header.Crc32 = reader.ReadUInt32();
             header.ChunkCount = reader.ReadUInt32();
-
-            if (header.Magic != "CR2W")
-                throw new Exception("Not a CR2W file");
-
-            if (header.Version > 195 || header.Version < 163)
-                throw new FormatException("Unsupported CR2W version");
 
             this.header = header;
             this.tables = new CR2WTableEntry[10];
@@ -237,9 +239,6 @@ namespace CR2WLib
                     }
                 }
             }
-
-            if (this.buffers.Length > 0)
-                this.ReadBuffer(0);
         }
 
         public static CR2WFile ReadFile(Stream stream)

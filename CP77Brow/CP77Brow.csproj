@@ -59,6 +59,12 @@
       <DependentUpon>Browser.cs</DependentUpon>
     </Compile>
     <Compile Include="CyberpunkGame.cs" />
+    <Compile Include="FileNameSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FileNameSearch.Designer.cs">
+      <DependentUpon>FileNameSearch.cs</DependentUpon>
+    </Compile>
     <Compile Include="FileViewer\Viewer_C2DArray.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -93,6 +99,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Browser.resx">
       <DependentUpon>Browser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FileNameSearch.resx">
+      <DependentUpon>FileNameSearch.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FileViewer\Viewer_C2DArray.resx">
       <DependentUpon>Viewer_C2DArray.cs</DependentUpon>

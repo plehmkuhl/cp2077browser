@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System.IO;
+using System.Collections.Concurrent;
 
 namespace ArchiveLib.HashResolver
 {
-    class NyxModsResolver : IArchiveHashResolver
+    class HashCsvResolver : IArchiveHashResolver
     {
-        private Dictionary<ulong, string> fileHashes;
+        private ConcurrentDictionary<ulong, string> fileHashes;
 
         public void Initialize()
         {
@@ -24,7 +25,7 @@ namespace ArchiveLib.HashResolver
             if (cachedFile.Exists)
                 cachedDate = cachedFile.LastWriteTimeUtc;
 
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create("https://nyxmods.com/cp77/files/archivehashes.csv");
+            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create("https://graphicscore.dev/cyberpunk/cyberbot/data/archivehashes.csv");
             if (cachedDate != null)
             {
                 request.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.BypassCache);
@@ -60,7 +61,7 @@ namespace ArchiveLib.HashResolver
 
         public void ReadHashTable()
         {
-            this.fileHashes = new Dictionary<ulong, string>();
+            this.fileHashes = new ConcurrentDictionary<ulong, string>();
 
             FileInfo cachedFile = new FileInfo(Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "archivehashes.csv"));
             if (cachedFile.Exists)
@@ -78,7 +79,7 @@ namespace ArchiveLib.HashResolver
                     try
                     {
                         dataLine = reader.ReadLine().Split(',');
-                        this.fileHashes.Add(UInt64.Parse(dataLine[1]), dataLine[0]);
+                        this.fileHashes.TryAdd(UInt64.Parse(dataLine[1]), dataLine[0]);
                     } catch (Exception e)
                     {
                         Console.Error.Write(e);
@@ -93,7 +94,7 @@ namespace ArchiveLib.HashResolver
             if (this.fileHashes.ContainsKey(hash))
                 return this.fileHashes[hash];
 
-            return "";
+            return null;
         }
     }
 }

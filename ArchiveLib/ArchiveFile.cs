@@ -65,8 +65,6 @@ namespace ArchiveLib
             byte[] compressed = new byte[entry.compressedSize];
             byte[] uncompressed = new byte[entry.originalSize];
 
-            Console.WriteLine($"Read offset {entry.offset}");
-
             this.stream.Seek(entry.offset, SeekOrigin.Begin);
             this.stream.Read(compressed, 0, compressed.Length);
 
@@ -92,7 +90,7 @@ namespace ArchiveLib
         {
             for (int i=0; i < this.chunkFileOffsets.Length; i++)
             {
-                if (this.chunkFileOffsets[i] <= this.position && (this.chunkFileOffsets[i] + this.chunkEntries[i].originalSize) > this.position)
+                if (this.chunkFileOffsets[i] <= this.position && (this.chunkFileOffsets[i] + this.chunkEntries[i].originalSize - 1) > this.position)
                     return i;
             }
 

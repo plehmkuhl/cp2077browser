@@ -39,6 +39,12 @@ namespace CP77Brow
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.changeGamepathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.actionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.decodeHashesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.searchFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.byPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.byHashToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -96,7 +102,8 @@ namespace CP77Brow
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.settingsToolStripMenuItem});
+            this.settingsToolStripMenuItem,
+            this.actionsToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(923, 24);
@@ -106,6 +113,8 @@ namespace CP77Brow
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.searchFileToolStripMenuItem,
+            this.toolStripSeparator1,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
@@ -140,6 +149,48 @@ namespace CP77Brow
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // actionsToolStripMenuItem
+            // 
+            this.actionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.decodeHashesToolStripMenuItem});
+            this.actionsToolStripMenuItem.Name = "actionsToolStripMenuItem";
+            this.actionsToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
+            this.actionsToolStripMenuItem.Text = "Actions";
+            // 
+            // decodeHashesToolStripMenuItem
+            // 
+            this.decodeHashesToolStripMenuItem.Name = "decodeHashesToolStripMenuItem";
+            this.decodeHashesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.decodeHashesToolStripMenuItem.Text = "Decode hashes";
+            this.decodeHashesToolStripMenuItem.Click += new System.EventHandler(this.decodeHashesToolStripMenuItem_Click);
+            // 
+            // searchFileToolStripMenuItem
+            // 
+            this.searchFileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.byPathToolStripMenuItem,
+            this.byHashToolStripMenuItem});
+            this.searchFileToolStripMenuItem.Name = "searchFileToolStripMenuItem";
+            this.searchFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.searchFileToolStripMenuItem.Text = "Search File";
+            // 
+            // byPathToolStripMenuItem
+            // 
+            this.byPathToolStripMenuItem.Name = "byPathToolStripMenuItem";
+            this.byPathToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.byPathToolStripMenuItem.Text = "By Path";
+            this.byPathToolStripMenuItem.Click += new System.EventHandler(this.byPathToolStripMenuItem_Click);
+            // 
+            // byHashToolStripMenuItem
+            // 
+            this.byHashToolStripMenuItem.Name = "byHashToolStripMenuItem";
+            this.byHashToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.byHashToolStripMenuItem.Text = "By Hash";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // Browser
             // 
@@ -176,6 +227,12 @@ namespace CP77Brow
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem changeGamepathToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem actionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem decodeHashesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem searchFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem byPathToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem byHashToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }
 
