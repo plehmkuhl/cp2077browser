@@ -17,6 +17,8 @@ namespace CP77Brow
         [STAThread]
         static void Main()
         {
+            CR2WLib.Types.CR2WValue.RegisterTypes();   
+            
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 

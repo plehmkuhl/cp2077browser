@@ -13,4 +13,8 @@
     <ProjectReference Include="..\ArchiveLib\ArchiveLib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Types\Structs\" />
+  </ItemGroup>
+
 </Project>

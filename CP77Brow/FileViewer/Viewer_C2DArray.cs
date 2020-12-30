@@ -1,4 +1,5 @@
 ﻿using CR2WLib;
+using CR2WLib.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,34 +22,32 @@ namespace CP77Brow.FileViewer
 
             InitializeComponent();
 
-            CR2WVariant header = this.file.Exports[0].Data["headers"];
-            CR2WVariant data = this.file.Exports[0].Data["data"];
+            CR2WValue[] header = this.file.Exports[0].NewData["headers"].As<CR2WValue[]>();
 
-            if (header.TypeName != "array:String")
-                return;
-
-            if (data.TypeName != "array:array:String")
-                return;
+            CR2WValue[] data;
+            if (this.file.Exports[0].NewData.ContainsKey("data"))
+                data = this.file.Exports[0].NewData["data"].As<CR2WValue[]>();
+            else
+                data = new CR2WValue[0];
 
             // Read Header
-            string[] headers = header.ToStringArray();
-            foreach (string headerName in headers)
+            foreach (CR2WValue headerName in header)
             {
-                this.dataGridView1.Columns.Add(headerName, headerName);
+                this.dataGridView1.Columns.Add(headerName.As<string>(), headerName.As<string>());
             }
 
             // Read data
             {
-                string[][] dataValues = data.To2DStringArray();
-
-                for (uint r=0; r < dataValues.Length; r++)
+                for (uint r=0; r < data.Length; r++)
                 {
                     DataGridViewRow gridRow = new DataGridViewRow();
 
                     gridRow.CreateCells(this.dataGridView1);
-                    for (int c=0; c < dataValues[r].Length; c++)
+
+                    CR2WValue[] row = data[r].As<CR2WValue[]>();
+                    for (int c=0; c < row.Length; c++)
                     {
-                        gridRow.Cells[c].Value = dataValues[r][c];
+                        gridRow.Cells[c].Value = row[c].As<string>();
                     }
 
                     this.dataGridView1.Rows.Add(gridRow);

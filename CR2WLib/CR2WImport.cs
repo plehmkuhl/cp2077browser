@@ -19,5 +19,6 @@ namespace CR2WLib
         public string Path { get => this.file.OffsetStrings[this.entry.Path];  }
         public string ClassName { get => this.file.CNames[this.entry.ClassName]; }
         public ushort Flags { get => this.entry.Flags; }
+        public override string ToString() { return $"Import({this.Path})"; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CR2WLib;
+using CR2WLib.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,33 +18,21 @@ namespace CP77Brow.FileViewer
         {
             InitializeComponent();
 
-            CR2WVariant resources = file.Exports[0].Data["resources"];
-            CR2WVariant descriptions = null;
+            CR2WValue[] resources = file.Exports[0].NewData["resources"].As<CR2WValue[]>();
+            CR2WValue[] descriptions = null;
             
-            if (file.Exports[0].Data.ContainsKey("descriptions"))
-                descriptions = file.Exports[0].Data["descriptions"];
-
-            if (resources.TypeName != "array:raRef:CResource")
-                return;
-
-            if (descriptions != null && descriptions.TypeName != "array:String")
-                return;
-
-            string[] resourceTable = resources.ToRaRefArray();
-            string[] descriptionTable = null;
-
-            if (descriptions != null)
-                descriptionTable = descriptions.ToStringArray();
+            if (file.Exports[0].NewData.ContainsKey("descriptions"))
+                descriptions = file.Exports[0].NewData["descriptions"].As<CR2WValue[]>();
             
-            for (int i=0; i < resourceTable.Length; i++)
+            for (int i=0; i < resources.Length; i++)
             {
                 DataGridViewRow row = new DataGridViewRow();
                 row.CreateCells(this.resourceListView);
 
-                row.Cells[0].Value = resourceTable[i];
+                row.Cells[0].Value = resources[i].As<CR2WImport>().Path;
 
-                if (descriptionTable != null)
-                    row.Cells[1].Value = descriptionTable[i];
+                if (descriptions != null)
+                    row.Cells[1].Value = descriptions[i].As<string>();
 
                 this.resourceListView.Rows.Add(row);
             }

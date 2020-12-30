@@ -36,7 +36,7 @@ namespace ArchiveLib
         {
             ArchiveManager.cachedResolver = new HashResolver.LocalResolver();
 
-            ArchiveManager.resolvers.Add(new HashResolver.HashCsvResolver());
+            ArchiveManager.resolvers.Add(new HashResolver.FileDatabase());
             ArchiveManager.resolvers.Add(ArchiveManager.cachedResolver);
 
             // Init resolvers

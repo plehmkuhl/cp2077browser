@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 
 namespace ArchiveLib.HashResolver
 {
-    class HashCsvResolver : IArchiveHashResolver
+    class FileDatabase : IArchiveHashResolver
     {
         private ConcurrentDictionary<ulong, string> fileHashes;
 
@@ -19,7 +19,10 @@ namespace ArchiveLib.HashResolver
 
         public void UpdateHashTable()
         {
+            throw new NotImplementedException(); // Fail for now
+
             DateTime cachedDate = new DateTime(0);
+
 
             FileInfo cachedFile = new FileInfo(Path.Combine(System.AppDomain.CurrentDomain.BaseDirectory, "archivehashes.csv"));
             if (cachedFile.Exists)

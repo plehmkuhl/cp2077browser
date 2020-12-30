@@ -13,6 +13,7 @@ using ArchiveLib;
 using ArchiveLib.Tools;
 using CP77Brow.FileViewer;
 using CR2WLib;
+using WEMLib;
 
 namespace CP77Brow
 {
@@ -213,9 +214,16 @@ namespace CP77Brow
 
         public void OpenFile(ArchiveFileInfo fileInfo, bool defaultTab)
         {
+            ArchiveFile file = fileInfo.OpenRead();
+
+            this.editorTabControl.TabPages.Clear();
+            TabPage page = new TabPage(Path.GetFileName(fileInfo.Name));
+            this.editorTabControl.TabPages.Add(page);
+
+            // Try CR2W
             try
             {
-                ArchiveFile file = fileInfo.OpenRead();
+                file.Seek(0, SeekOrigin.Begin); // Rewind file
                 CR2WFile cr2w = CR2WFile.ReadFile(file);
 
                 var exports = cr2w.Exports;
@@ -224,9 +232,6 @@ namespace CP77Brow
                     Console.WriteLine($"Got {e.CName}");
                 }
 
-                this.editorTabControl.TabPages.Clear();
-
-                TabPage page = new TabPage(Path.GetFileName(fileInfo.Name));
                 switch (cr2w.Exports[0].CName)
                 {
                     case "C2dArray":
@@ -262,11 +267,26 @@ namespace CP77Brow
                         }
                 }
                 
-                this.editorTabControl.TabPages.Add(page);
+                return;
             } catch (Exception e)
             {
                 Console.Error.Write(e);
             }
+
+            // Try WEM
+            /*try
+            {
+                file.Seek(0, SeekOrigin.Begin); // Rewind file
+                WEMFile wemFile = new WEMFile(file);
+
+                Viewer_WEM viewer = new Viewer_WEM(wemFile);
+                viewer.Dock = DockStyle.Fill;
+                page.Controls.Add(viewer);
+                
+            }  catch (Exception e)
+            {
+                Console.Error.Write(e);
+            }*/
         }
 
         private void containerTreeView_DoubleClick(object sender, EventArgs e)
